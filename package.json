@@ -8,8 +8,8 @@
     "example": "example"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack --progress --config webpack.build.config.js",
-    "dev": "webpack-dev-server --progress --inline --config webpack.dev.config.js --host 0.0.0.0",
+    "build": "NODE_ENV=production webpack --progress --config build/webpack.build.config.js",
+    "dev": "webpack-dev-server --progress --inline --config build/webpack.dev.config.js --host 0.0.0.0",
     "test": "ava --verbose"
   },
   "ava": {
