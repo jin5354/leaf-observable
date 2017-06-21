@@ -1,0 +1,30 @@
+{
+  "name": "leaf-observable",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack --progress --config webpack.build.config.js",
+    "dev": "webpack-dev-server --progress --inline --config webpack.dev.config.js --host 0.0.0.0"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-core": "^6.25.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-preset-latest": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.16",
+    "eslint": "3.19.0",
+    "eslint-config-wdfe": "^0.3.2",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-html": "^3.0.0",
+    "eslint-plugin-vue": "^2.0.1",
+    "html-webpack-plugin": "^2.28.0",
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5"
+  }
+}
