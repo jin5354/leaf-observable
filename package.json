@@ -10,7 +10,7 @@
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --config build/webpack.build.config.js",
     "dev": "webpack-dev-server --progress --inline --config build/webpack.dev.config.js --host 0.0.0.0",
-    "test": "ava --verbose"
+    "test": "nyc ava --verbose"
   },
   "ava": {
     "require": [
@@ -27,12 +27,14 @@
     "babel-preset-latest": "^6.24.1",
     "babel-register": "^6.24.1",
     "clean-webpack-plugin": "^0.1.16",
+    "coveralls": "^2.13.1",
     "eslint": "3.19.0",
     "eslint-config-wdfe": "^0.3.2",
     "eslint-loader": "^1.7.1",
     "eslint-plugin-html": "^3.0.0",
     "eslint-plugin-vue": "^2.0.1",
     "html-webpack-plugin": "^2.28.0",
+    "nyc": "^11.0.2",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5"
   },
