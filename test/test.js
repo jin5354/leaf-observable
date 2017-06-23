@@ -2,7 +2,7 @@
  * @Filename: test.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-23 08:53:03
+ * @Last Modified time: 2017-06-23 15:09:44
  */
 
 import test from 'ava'
@@ -70,7 +70,7 @@ test('basis noChange test 基本无变动测试', t => {
 test('array test 数组测试', t => {
 
   let e = {
-    a: [1,2,3,4]
+    a: [1, 2, 3, 4]
   }
 
   let newValueToken
