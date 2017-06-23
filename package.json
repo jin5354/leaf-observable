@@ -6,7 +6,6 @@
   "module": "src/index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --config build/webpack.build.config.js",
-    "dev": "webpack-dev-server --progress --inline --config build/webpack.dev.config.js --host 0.0.0.0",
     "test": "nyc ava --verbose"
   },
   "ava": {
@@ -15,8 +14,8 @@
     ],
     "babel": "inherit"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "jin5354<xiaoyanjinx@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "babel-core": "^6.25.0",
     "babel-eslint": "^7.2.3",
