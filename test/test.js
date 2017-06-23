@@ -2,7 +2,7 @@
  * @Filename: test.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-23 08:41:00
+ * @Last Modified time: 2017-06-23 08:53:03
  */
 
 import test from 'ava'
@@ -185,13 +185,43 @@ test('avoid duplicate observify 避免重复 observify', t => {
 
 })
 
-test('avoid observify null 避免 observify null', t => {
+test('avoid observify null 避免 observify null 与 undefined', t => {
 
   let e = null
+  let e2 = undefined
 
   let a = observify(e)
+  let b = observify(e2)
 
   t.is(a, undefined)
+  t.is(b, undefined)
+  t.pass()
+
+})
+
+test('avoid observify null 避免相同复杂值触发 update', t => {
+
+  let e = {
+    a: {
+      b: [1, 2, 3]
+    }
+  }
+
+  let changeToken = false
+
+  observify(e)
+  watch(() => {
+    return e.a.b
+  }, () => {
+    changeToken = true
+  })
+
+  e.a = {
+    b: [1, 2, 3]
+  }
+  e.a.b = [1, 2, 3]
+
+  t.falsy(changeToken)
   t.pass()
 
 })
