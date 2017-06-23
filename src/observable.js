@@ -2,7 +2,7 @@
  * @Filename: observable.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-21 18:05:33
+ * @Last Modified time: 2017-06-23 08:28:24
  */
 
 import {Dep} from './dep.js'
@@ -60,12 +60,19 @@ export class Observable {
 
     let dep = new Dep()
 
+    let ob = observify(value)
     Object.defineProperty(obj, key, {
       enumerable: true,
       configurable: true,
       get() {
         if(Dep.target) {
           dep.depend()
+          if(ob) {
+            ob.dep.depend()
+          }
+          if(Array.isArray(value)) {
+            dependArray(value)
+          }
         }
         return value
       },
@@ -79,7 +86,6 @@ export class Observable {
         }
       }
     })
-    observify(value)
   }
 
 }
@@ -99,4 +105,19 @@ export function observify(obj) {
     ob = new Observable(obj)
   }
   return ob
+}
+
+/**
+ * [dependArray 在 Array 内收集依赖]
+ * @param  {[type]} arr [description]
+ * @return {[type]}     [description]
+ */
+function dependArray(arr) {
+  for (let e, i = 0, l = arr.length; i < l; i++) {
+    e = arr[i]
+    e && e.__observer__ && e.__observer__.dep.depend()
+    if (Array.isArray(e)) {
+      dependArray(e)
+    }
+  }
 }

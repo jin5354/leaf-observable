@@ -2,7 +2,7 @@
  * @Filename: dep.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-21 11:12:29
+ * @Last Modified time: 2017-06-23 08:11:07
  */
 let uid = 1
 
@@ -26,17 +26,6 @@ export class Dep {
    */
   depend() {
     Dep.target && Dep.target.addDep(this)
-  }
-
-  /**
-   * [removeSub 移除订阅]
-   * @param  {[watcher]} sub
-   */
-  removeSub(sub) {
-    let index = this.subs.indexOf(sub)
-    if(index !== -1) {
-      this.subs.splice(index, 1)
-    }
   }
 
   /**

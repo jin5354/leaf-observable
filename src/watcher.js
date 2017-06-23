@@ -2,10 +2,12 @@
  * @Filename: watcher.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-21 14:32:38
+ * @Last Modified time: 2017-06-23 08:14:39
  */
 
 import {Dep} from './dep.js'
+import isEqual from 'lodash.isequal'
+import cloneDeep from 'lodash.clonedeep'
 
 export class Watcher {
 
@@ -15,6 +17,7 @@ export class Watcher {
     this.depIds = new Set()
     this.cb = cb
     this.value = this.subAndGetValue()
+    this.clonedOldValue = cloneDeep(this.value)
   }
 
   /**
@@ -22,10 +25,10 @@ export class Watcher {
    */
   update() {
     let value = this.subAndGetValue()
-    let oldValue = this.value
-    if(value !== oldValue) {
+    if(!isEqual(value, this.clonedOldValue)) {
       this.value = value
-      this.cb.call(this.context, value, oldValue)
+      this.cb.call(this.context, value, this.clonedOldValue)
+      this.clonedOldValue = cloneDeep(value)
     }
   }
 
@@ -50,4 +53,8 @@ export class Watcher {
     }
   }
 
+}
+
+export function watch(expFn, cb, context) {
+  return new Watcher(expFn, cb, context)
 }
