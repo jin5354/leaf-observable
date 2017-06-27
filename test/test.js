@@ -2,13 +2,13 @@
  * @Filename: test.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-23 15:09:44
+ * @Last Modified time: 2017-06-28 07:30:51
  */
-
+import 'regenerator-runtime/runtime'
 import test from 'ava'
-import {observify, watch} from '../src/index.js'
+import {observify, watch, nextTick} from '../src/index.js'
 
-test('basis test 基本测试', t => {
+test('basis test 基本测试', async t => {
 
   let e = {
     a: 1,
@@ -37,15 +37,15 @@ test('basis test 基本测试', t => {
   e.a = 2
   e.b.c = 20
 
-  t.is(newValueToken, 2)
-  t.is(oldValueToken, 1)
-  t.is(newValueToken2, 20)
-  t.is(oldValueToken2, 10)
-  t.pass()
-
+  await nextTick(() => {
+    t.is(newValueToken, 2)
+    t.is(oldValueToken, 1)
+    t.is(newValueToken2, 20)
+    t.is(oldValueToken2, 10)
+  })
 })
 
-test('basis noChange test 基本无变动测试', t => {
+test('basis noChange test 基本无变动测试', async t => {
 
   let e = {
     a: 1
@@ -62,12 +62,13 @@ test('basis noChange test 基本无变动测试', t => {
 
   e.a = 1
 
-  t.falsy(changeToken)
-  t.pass()
+  await nextTick(() => {
+    t.falsy(changeToken)
+  })
 
 })
 
-test('array test 数组测试', t => {
+test('array test 数组测试', async t => {
 
   let e = {
     a: [1, 2, 3, 4]
@@ -86,13 +87,14 @@ test('array test 数组测试', t => {
 
   e.a.push(5, 6)
 
-  t.is(oldValueToken.length, 4)
-  t.is(newValueToken.length, 6)
-  t.pass()
+  nextTick(() => {
+    t.is(oldValueToken.length, 4)
+    t.is(newValueToken.length, 6)
+  })
 
 })
 
-test('nested array test 嵌套数组测试', t => {
+test('nested array test 嵌套数组测试', async t => {
 
   let e = {
     a: 1,
@@ -123,13 +125,14 @@ test('nested array test 嵌套数组测试', t => {
 
   e.d[0].g.h[0].i[0].push(5, 6)
 
-  t.is(oldValueToken.length, 4)
-  t.is(newValueToken.length, 6)
-  t.pass()
+  await nextTick(() => {
+    t.is(oldValueToken.length, 4)
+    t.is(newValueToken.length, 6)
+  })
 
 })
 
-test('collect dep 向上依赖收集测试', t => {
+test('collect dep 向上依赖收集测试', async t => {
 
   let o = {
     a: {
@@ -165,9 +168,10 @@ test('collect dep 向上依赖收集测试', t => {
     }
   }
 
-  t.is(newValueToken.d.length, 3)
-  t.is(oldValueToken.d.e, 1)
-  t.pass()
+  nextTick(() => {
+    t.is(newValueToken.d.length, 3)
+    t.is(oldValueToken.d.e, 1)
+  })
 
 })
 
@@ -181,7 +185,6 @@ test('avoid duplicate observify 避免重复 observify', t => {
   let b = observify(e)
 
   t.is(a, b)
-  t.pass()
 
 })
 
@@ -195,11 +198,10 @@ test('avoid observify null 避免 observify null 与 undefined', t => {
 
   t.is(a, undefined)
   t.is(b, undefined)
-  t.pass()
 
 })
 
-test('avoid observify null 避免相同复杂值触发 update', t => {
+test('avoid observify null 避免相同复杂值触发 update', async t => {
 
   let e = {
     a: {
@@ -221,7 +223,93 @@ test('avoid observify null 避免相同复杂值触发 update', t => {
   }
   e.a.b = [1, 2, 3]
 
-  t.falsy(changeToken)
-  t.pass()
+  nextTick(() => {
+    t.falsy(changeToken)
+  })
 
+})
+
+test('deep watch 对象深度监测', async t => {
+
+  let o = {
+    a: {
+      b: {
+        c: {
+          d: {
+            e: 1
+          },
+          f: [1, 2, 3],
+          g: null
+        }
+      }
+    }
+  }
+
+  let changeToken = false
+
+  observify(o)
+  watch(() => {
+    return o.a.b + JSON.stringify(o.a.b.c)
+  }, () => {
+    changeToken = true
+  }, {
+    deep: true,
+    context: o
+  })
+
+  o.a.b.c.d.e = 2
+
+  await nextTick(() => {
+    t.truthy(changeToken)
+  })
+
+})
+
+test('scheduler 异步事件队列', async t => {
+
+  let o = {
+    a: 1
+  }
+
+  let changeToken = 1
+
+  observify(o)
+  watch(() => {
+    return o.a
+  }, () => {
+    changeToken ++
+  }, {
+    deep: true,
+    context: o
+  })
+
+  o.a = 2
+  o.a = 3
+  o.a = 4
+
+  await nextTick(() => {
+    t.is(changeToken, 2)
+  })
+
+})
+
+test('immediate 立刻执行回调', async t => {
+
+  let o = {
+    a: 1
+  }
+
+  let changeToken = 1
+
+  observify(o)
+  watch(() => {
+    return o.a
+  }, () => {
+    changeToken ++
+  }, {
+    immediate: true
+  })
+
+  o.a = 2
+  t.is(changeToken, 2)
 })

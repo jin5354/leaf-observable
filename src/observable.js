@@ -2,7 +2,7 @@
  * @Filename: observable.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-23 08:28:24
+ * @Last Modified time: 2017-06-28 07:24:24
  */
 
 import {Dep} from './dep.js'
@@ -10,9 +10,10 @@ import {isObject} from './util.js'
 
 export class Observable {
 
-  constructor(value) {
+  constructor(value, level) {
     this.value = value
     this.dep = new Dep()
+    this.level = level
     Object.defineProperty(value, '__observer__', {
       value: this,
       enumerable: false,
@@ -23,7 +24,7 @@ export class Observable {
     if(Array.isArray(value)) {
       this.observifyArray(value)
       for(let i = 0; i < value.length; i++) {
-        observify(value[i])
+        observify(value[i], false, this.level + 1)
       }
     }else {
       Object.keys(value).forEach((key) => {
@@ -60,12 +61,17 @@ export class Observable {
 
     let dep = new Dep()
 
-    let ob = observify(value)
+    let ob = observify(value, false, this.level + 1)
     Object.defineProperty(obj, key, {
       enumerable: true,
       configurable: true,
       get() {
         if(Dep.target) {
+          Dep.target.collectingPathPoint && Dep.target.addAndExtractionDeepCollect({
+            key: key,
+            value: value,
+            level: obj.__observer__.level
+          })
           dep.depend()
           if(ob) {
             ob.dep.depend()
@@ -81,7 +87,7 @@ export class Observable {
           return
         }else {
           value = newValue
-          observify(newValue)
+          observify(newValue, false, this.level + 1)
           dep.notify()
         }
       }
@@ -94,7 +100,7 @@ export class Observable {
  * [observify 将指定对象响应化]
  * @param {[obj]} obj
  */
-export function observify(obj) {
+export function observify(obj, isRoot = true, level = 0) {
   if(!isObject(obj)) {
     return
   }
@@ -102,7 +108,8 @@ export function observify(obj) {
   if(obj.__observer__) {
     ob = obj.__observer__
   }else {
-    ob = new Observable(obj)
+    let _level = isRoot ? 0 : level
+    ob = new Observable(obj, _level)
   }
   return ob
 }
