@@ -1,8 +1,7 @@
 /*
  * @Filename: watcher.js
- * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 08:22:40
+ * @Last Modified time: 2017-06-28 14:47:44
  */
 import isEqual from 'lodash.isequal'
 import cloneDeep from 'lodash.clonedeep'
@@ -107,6 +106,9 @@ export class Watcher {
     }
   }
 
+  /**
+   * [cleanDeepCollectInfo 清除 deep watch 时收集的信息]
+   */
   cleanDeepCollectInfo() {
     this.pathPointCollect.length = 0
     this.depTarget.length = 0

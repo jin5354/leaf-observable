@@ -1,8 +1,7 @@
 /*
  * @Filename: util.js
- * @Author: jin
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-21 11:38:03
+ * @Last Modified time: 2017-06-28 14:46:49
  */
 
 /**

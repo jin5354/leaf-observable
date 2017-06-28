@@ -1,12 +1,16 @@
 /*
  * @Filename: nextTick.js
- * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-27 19:02:28
+ * @Last Modified time: 2017-06-28 14:46:17
  */
 
 const supportMO = typeof MutationObserver !== 'undefined'
 
+/**
+ * [nextTick 在函数推入下一个 tick ]
+ * @param  {[func]} task
+ * @return {[promise]}
+ */
 export function nextTick(task) {
   return (() => {
     /* istanbul ignore if */

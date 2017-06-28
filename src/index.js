@@ -1,8 +1,7 @@
 /*
  * @Filename: index.js
- * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-27 18:29:55
+ * @Last Modified time: 2017-06-28 14:45:38
  */
 
 export * from './observable.js'

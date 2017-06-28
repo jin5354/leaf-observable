@@ -1,8 +1,7 @@
 /*
  * @Filename: observable.js
- * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 08:51:27
+ * @Last Modified time: 2017-06-28 14:46:21
  */
 
 import {Dep} from './dep.js'
