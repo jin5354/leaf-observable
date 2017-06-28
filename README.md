@@ -32,7 +32,7 @@ yarn add leaf-observable --dev
 ## Usage
 
 ```javascript
-import {observify, watch} from 'leaf-observable'
+import {observify, watch, set, del} from 'leaf-observable'
 
 let o = {
   a: 1,
@@ -61,7 +61,7 @@ o.a = 2   // console: newVal: 5  oldVal: 4
 
 Observify a object.
 
-- obj(object): the object to be observified
+- obj(object): the object to be observified.
 
 ### watch(expFn, callback, options)
 
@@ -70,7 +70,7 @@ Add a new watcher.
 - expFn(function): function which return needed value which rely on reactive data.
 - callback(function): function to call after expFn's result has been changed.
 - options(object):
-  - deep(boolean): whether watch nested objects
+  - deep(boolean): whether watch nested objects.
   - immediate(boolean): whether run callback function syncly.
   - context(object): the context when expFn runs, will be 'this' in expFn.
 
