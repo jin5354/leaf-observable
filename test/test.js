@@ -2,11 +2,11 @@
  * @Filename: test.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 07:30:51
+ * @Last Modified time: 2017-06-28 08:41:31
  */
 import 'regenerator-runtime/runtime'
 import test from 'ava'
-import {observify, watch, nextTick} from '../src/index.js'
+import {observify, watch, nextTick, set, del} from '../src/index.js'
 
 test('basis test 基本测试', async t => {
 
@@ -312,4 +312,88 @@ test('immediate 立刻执行回调', async t => {
 
   o.a = 2
   t.is(changeToken, 2)
+})
+
+test('set 添加属性', async t => {
+
+  let o = {
+    a: {
+      b: 1
+    },
+    d: [1, 2, 3, 4],
+    e: 1
+  }
+
+  let changeToken = false
+  let changeToken2 = false
+  let changeToken3 = false
+
+  observify(o)
+  watch(() => {
+    return o.a
+  }, () => {
+    changeToken = true
+  })
+
+  watch(() => {
+    return o.d
+  }, () => {
+    changeToken2 = true
+  })
+
+  watch(() => {
+    return o.e
+  }, () => {
+    changeToken3 = true
+  })
+
+  set(o.a, 'c', 2)
+  set(o.d, 4, 5)
+  set(o.a.b, 'test', 'something')
+  set(o, 'e', 2)
+
+  await nextTick(() => {
+    t.truthy(changeToken, true)
+    t.truthy(changeToken2, true)
+    t.truthy(changeToken3, true)
+    t.is(o.d.length, 5)
+  })
+})
+
+test('remove 删除属性', async t => {
+
+  let o = {
+    a: {
+      b: 1,
+      c: 2
+    },
+    d: [1, 2, 3, 4]
+  }
+
+  let changeToken = false
+  let changeToken2 = false
+
+  observify(o)
+  watch(() => {
+    return o.a
+  }, () => {
+    changeToken = true
+  })
+
+  watch(() => {
+    return o.d
+  }, () => {
+    changeToken2 = true
+  })
+
+  del(o.a, 'c')
+  del(o.d, 3)
+  del(o.a.b, 'test')
+  del(o.a, 'd')
+
+  await nextTick(() => {
+    t.truthy(changeToken, true)
+    t.truthy(changeToken2, true)
+    t.is(o.d.length, 3)
+  })
 })

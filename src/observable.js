@@ -2,7 +2,7 @@
  * @Filename: observable.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 07:24:24
+ * @Last Modified time: 2017-06-28 08:42:08
  */
 
 import {Dep} from './dep.js'
@@ -10,10 +10,10 @@ import {isObject} from './util.js'
 
 export class Observable {
 
-  constructor(value, level) {
+  constructor(value, isRoot = true) {
     this.value = value
     this.dep = new Dep()
-    this.level = level
+    this.isRoot = isRoot
     Object.defineProperty(value, '__observer__', {
       value: this,
       enumerable: false,
@@ -24,11 +24,11 @@ export class Observable {
     if(Array.isArray(value)) {
       this.observifyArray(value)
       for(let i = 0; i < value.length; i++) {
-        observify(value[i], false, this.level + 1)
+        observify(value[i], false)
       }
     }else {
       Object.keys(value).forEach((key) => {
-        this.defineReactive(value, key, value[key])
+        defineReactive(value, key, value[key])
       })
     }
   }
@@ -44,6 +44,9 @@ export class Observable {
       arrayAugmentations[method] = function(...arg) {
         const ob = this.__observer__
         Array.prototype[method].apply(this, arg)
+        this.forEach(e => {
+          observify(e, false)
+        })
         ob.dep.notify()
       }
     })
@@ -51,56 +54,14 @@ export class Observable {
     Object.setPrototypeOf(arr, arrayAugmentations)
   }
 
-  /**
-   * [defineReactive 将对象的某个 key 响应化]
-   * @param  {[obj]} obj
-   * @param  {[string]} key
-   * @param  {[any]} value
-   */
-  defineReactive(obj, key, value) {
-
-    let dep = new Dep()
-
-    let ob = observify(value, false, this.level + 1)
-    Object.defineProperty(obj, key, {
-      enumerable: true,
-      configurable: true,
-      get() {
-        if(Dep.target) {
-          Dep.target.collectingPathPoint && Dep.target.addAndExtractionDeepCollect({
-            key: key,
-            value: value,
-            level: obj.__observer__.level
-          })
-          dep.depend()
-          if(ob) {
-            ob.dep.depend()
-          }
-          if(Array.isArray(value)) {
-            dependArray(value)
-          }
-        }
-        return value
-      },
-      set: (newValue) => {
-        if(newValue === value) {
-          return
-        }else {
-          value = newValue
-          observify(newValue, false, this.level + 1)
-          dep.notify()
-        }
-      }
-    })
-  }
-
 }
 
 /**
  * [observify 将指定对象响应化]
  * @param {[obj]} obj
+ * @param {[boolean]} isRoot
  */
-export function observify(obj, isRoot = true, level = 0) {
+export function observify(obj, isRoot = true) {
   if(!isObject(obj)) {
     return
   }
@@ -108,8 +69,7 @@ export function observify(obj, isRoot = true, level = 0) {
   if(obj.__observer__) {
     ob = obj.__observer__
   }else {
-    let _level = isRoot ? 0 : level
-    ob = new Observable(obj, _level)
+    ob = new Observable(obj, isRoot)
   }
   return ob
 }
@@ -120,11 +80,109 @@ export function observify(obj, isRoot = true, level = 0) {
  * @return {[type]}     [description]
  */
 function dependArray(arr) {
-  for (let e, i = 0, l = arr.length; i < l; i++) {
+  for(let e, i = 0, l = arr.length; i < l; i++) {
     e = arr[i]
     e && e.__observer__ && e.__observer__.dep.depend()
     if (Array.isArray(e)) {
       dependArray(e)
     }
   }
+}
+
+/**
+ * [defineReactive 将对象的某个 key 响应化]
+ * @param  {[obj]} obj
+ * @param  {[string]} key
+ * @param  {[any]} value
+ */
+function defineReactive(obj, key, value) {
+
+  let dep = new Dep()
+
+  let ob = observify(value, false)
+  Object.defineProperty(obj, key, {
+    enumerable: true,
+    configurable: true,
+    get() {
+      if(Dep.target) {
+        Dep.target.collectingPathPoint && Dep.target.addAndExtractionDeepCollect({
+          key: key,
+          value: value,
+          isRoot: obj.__observer__.isRoot
+        })
+        dep.depend()
+        if(ob) {
+          ob.dep.depend()
+        }
+        if(Array.isArray(value)) {
+          dependArray(value)
+        }
+      }
+      return value
+    },
+    set: (newValue) => {
+      if(newValue === value) {
+        return
+      }else {
+        value = newValue
+        observify(newValue, false)
+        dep.notify()
+      }
+    }
+  })
+}
+
+/**
+ * [set 添加属性]
+ * @param {[obj]} target
+ * @param {[string]} key
+ * @param {[any]} val
+ */
+export function set(target, key, val) {
+  if(!isObject(target)) {
+    return
+  }
+  if(Array.isArray(target) && typeof key === 'number') {
+    target.length = Math.max(target.length, key)
+    target.splice(key, 1, val)
+    return val
+  }
+  if(target[key]) {
+    target[key] = val
+    return val
+  }else {
+    const ob = target.__observer__
+    /* istanbul ignore else */
+    if(ob) {
+      defineReactive(ob.value, key, val)
+      ob.dep.notify()
+    }
+  }
+  return val
+}
+
+/**
+ * [remove 删除属性]
+ * @param {[obj]} target
+ * @param {[string]} key
+ * @param {[any]} val
+ */
+export function del(target, key) {
+  if(!isObject(target)) {
+    return
+  }
+  if(Array.isArray(target) && typeof key === 'number') {
+    target.splice(key, 1)
+    return
+  }
+  if(!target[key]) {
+    return
+  }
+  const ob = target.__observer__
+  delete target[key]
+  /* istanbul ignore else */
+  if(ob) {
+    ob.dep.notify()
+  }
+  return
 }

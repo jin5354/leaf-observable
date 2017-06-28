@@ -2,7 +2,7 @@
  * @Filename: watcher.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 07:42:53
+ * @Last Modified time: 2017-06-28 08:22:40
  */
 import isEqual from 'lodash.isequal'
 import cloneDeep from 'lodash.clonedeep'
@@ -89,7 +89,7 @@ export class Watcher {
    * @param {[type]} pathPoint [description]
    */
   addAndExtractionDeepCollect(pathPoint) {
-    if(pathPoint.level === 0) {
+    if(pathPoint.isRoot) {
       this.extraction()
     }
     this.pathPointCollect.push(pathPoint)
