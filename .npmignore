@@ -1,0 +1,9 @@
+.DS_Store
+coverage/
+.nyc_output/
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.lock
+example/
+build/webpack.dev.config.js

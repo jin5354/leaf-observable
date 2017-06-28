@@ -1,9 +1,8 @@
 {
   "name": "leaf-observable",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "Observe data & make data reactive.",
   "main": "dist/index.js",
-  "module": "src/index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --progress --config build/webpack.build.config.js",
     "test": "nyc ava --verbose"
