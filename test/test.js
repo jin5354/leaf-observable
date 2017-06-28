@@ -2,7 +2,7 @@
  * @Filename: test.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 08:41:31
+ * @Last Modified time: 2017-06-28 08:50:21
  */
 import 'regenerator-runtime/runtime'
 import test from 'ava'

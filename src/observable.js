@@ -2,7 +2,7 @@
  * @Filename: observable.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 08:42:08
+ * @Last Modified time: 2017-06-28 08:51:27
  */
 
 import {Dep} from './dep.js'
@@ -10,6 +10,7 @@ import {isObject} from './util.js'
 
 export class Observable {
 
+  /* istanbul ignore next */
   constructor(value, isRoot = true) {
     this.value = value
     this.dep = new Dep()
