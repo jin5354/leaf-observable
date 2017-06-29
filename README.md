@@ -27,7 +27,8 @@ yarn add leaf-observable --dev
 - 支持通过 set/del 添加删除属性
 - 支持 deep watch
 - 支持 immediate 同步执行回调
-- 可以设置 expFn 的 context，允许 'return this.a + this.b' 这种写法
+- 可以设置 expFn 的 context，允许 'return this.a + this.b' 写法
+- 支持 unwatch
 
 ## Usage
 
@@ -73,6 +74,8 @@ Add a new watcher.
   - deep(boolean): whether watch nested objects.
   - immediate(boolean): whether run callback function syncly.
   - context(object): the context when expFn runs, will be 'this' in expFn.
+
+return a watcher insatce. use `instance.unwatch` can cancel watcher.
 
 ### set(obj, key, value)
 

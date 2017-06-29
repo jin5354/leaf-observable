@@ -1,7 +1,7 @@
 /*
  * @Filename: watcher.js
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 14:47:44
+ * @Last Modified time: 2017-06-29 08:49:30
  */
 import isEqual from 'lodash.isequal'
 import cloneDeep from 'lodash.clonedeep'
@@ -20,6 +20,7 @@ export class Watcher {
     this.deep = options.deep
     this.expFn = expFn
     this.depIds = new Set()
+    this.deps = new Set()
     this.pathPointCollect = []
     this.depTarget = []
     this.collectingPathPoint = false
@@ -79,6 +80,7 @@ export class Watcher {
   addDep(dep) {
     if(!this.depIds.has(dep.id)) {
       this.depIds.add(dep.id)
+      this.deps.add(dep)
       dep.addSub(this)
     }
   }
@@ -114,6 +116,14 @@ export class Watcher {
     this.depTarget.length = 0
   }
 
+  /**
+   * [unwatch 解除 watch]
+   */
+  unwatch() {
+    this.deps.forEach(dep => {
+      dep.removeSub(this)
+    })
+  }
 }
 
 /**

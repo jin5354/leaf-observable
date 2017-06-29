@@ -2,7 +2,7 @@
  * @Filename: test.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 08:50:21
+ * @Last Modified time: 2017-06-29 08:54:54
  */
 import 'regenerator-runtime/runtime'
 import test from 'ava'
@@ -397,3 +397,37 @@ test('remove 删除属性', async t => {
     t.is(o.d.length, 3)
   })
 })
+
+test('unwatch 解除 watch', t => {
+
+  let o = {
+    a: {
+      b: 1,
+      c: 2
+    },
+    d: [1, 2, 3, 4]
+  }
+
+  let changeToken = false
+
+  observify(o)
+
+  let watcher = watch(() => {
+    return o.a.c
+  }, () => {
+    changeToken = true
+  }, {
+    immediate: true
+  })
+
+  o.a.c = 3
+
+  t.truthy(changeToken)
+
+  watcher.unwatch()
+  changeToken = false
+
+  o.a.c = 4
+  t.falsy(changeToken)
+})
+
