@@ -1,7 +1,7 @@
 /*
  * @Filename: scheduler.js
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 15:02:35
+ * @Last Modified time: 2017-07-03 11:37:03
  */
 import {nextTick} from './nextTick.js'
 
@@ -23,6 +23,7 @@ function flushSchedulerQueue() {
  * [resetSchedulerState 重置 scheduler 状态]
  */
 function resetSchedulerState() {
+  queue.length = 0
   watcherIds = {}
   waiting = false
 }
