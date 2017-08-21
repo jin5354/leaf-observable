@@ -1,7 +1,7 @@
 /*
  * @Filename: observable.js
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-28 14:46:21
+ * @Last Modified time: 2017-08-21 11:24:58
  */
 
 import {Dep} from './dep.js'
@@ -125,7 +125,7 @@ function defineReactive(obj, key, value) {
         return
       }else {
         value = newValue
-        observify(newValue, false)
+        ob = observify(newValue, false)
         dep.notify()
       }
     }

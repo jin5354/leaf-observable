@@ -2,7 +2,7 @@
  * @Filename: test.js
  * @Author: jin5354
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-06-29 08:54:54
+ * @Last Modified time: 2017-08-21 11:29:34
  */
 import 'regenerator-runtime/runtime'
 import test from 'ava'
@@ -263,6 +263,34 @@ test('deep watch 对象深度监测', async t => {
     t.truthy(changeToken)
   })
 
+  let imageStore = {
+    image: {
+      imageName: 'image-name',
+    },
+  }
+
+  observify(imageStore)
+
+  let token = 0
+
+  watch(() => {
+    return imageStore.image
+  }, () => {
+    token ++
+  }, {
+    deep: true,
+    immediate: true,
+  })
+
+  imageStore.image = {imageName: '1234'}
+  t.is(token, 1)
+  set(imageStore.image, 'tintColor', '54321')
+  t.is(token, 2)
+  imageStore.image.imageName = {test: 123}
+  t.is(token, 3)
+  set(imageStore.image.imageName, 'testb', 456)
+  t.is(token, 4)
+
 })
 
 test('scheduler 异步事件队列', async t => {
@@ -430,4 +458,3 @@ test('unwatch 解除 watch', t => {
   o.a.c = 4
   t.falsy(changeToken)
 })
-
