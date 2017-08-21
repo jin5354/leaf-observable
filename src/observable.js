@@ -1,7 +1,7 @@
 /*
  * @Filename: observable.js
  * @Email: xiaoyanjinx@gmail.com
- * @Last Modified time: 2017-08-21 11:24:58
+ * @Last Modified time: 2017-08-21 14:53:12
  */
 
 import {Dep} from './dep.js'
@@ -147,7 +147,7 @@ export function set(target, key, val) {
     target.splice(key, 1, val)
     return val
   }
-  if(target[key]) {
+  if(target.hasOwnProperty(key)) {
     target[key] = val
     return val
   }else {
@@ -175,7 +175,7 @@ export function del(target, key) {
     target.splice(key, 1)
     return
   }
-  if(!target[key]) {
+  if(!target.hasOwnProperty(key)) {
     return
   }
   const ob = target.__observer__
