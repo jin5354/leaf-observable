@@ -1,6 +1,6 @@
 {
   "name": "leaf-observable",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Observe data & make data reactive.",
   "main": "dist/index.js",
   "scripts": {
