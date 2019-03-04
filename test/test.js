@@ -68,7 +68,33 @@ test('basis noChange test 基本无变动测试', async t => {
 
 })
 
-test('array test 数组测试', async t => {
+test('basic array test 基础数组测试', async t => {
+
+  let e = {
+    a: [1, 2, 3, 4]
+  }
+
+  let newValueToken
+  let oldValueToken
+
+  observify(e)
+  watch(() => {
+    return e.a
+  }, (newVal, oldVal) => {
+    newValueToken = newVal
+    oldValueToken = oldVal
+  })
+
+  e.a[0] = 5
+
+  nextTick(() => {
+    t.is(newValueToken[0], 5)
+    t.is(oldValueToken[0], 1)
+  })
+
+})
+
+test('array method test 数组变异方法测试', async t => {
 
   let e = {
     a: [1, 2, 3, 4]
@@ -88,8 +114,8 @@ test('array test 数组测试', async t => {
   e.a.push(5, 6)
 
   nextTick(() => {
-    t.is(oldValueToken.length, 4)
     t.is(newValueToken.length, 6)
+    t.is(oldValueToken.length, 4)
   })
 
 })

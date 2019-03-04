@@ -23,14 +23,11 @@ export class Observable {
 
     if(Array.isArray(value)) {
       this.observifyArray(value)
-      for(let i = 0; i < value.length; i++) {
-        observify(value[i], false)
-      }
-    }else {
-      Object.keys(value).forEach((key) => {
-        defineReactive(value, key, value[key])
-      })
     }
+
+    Object.keys(value).forEach((key) => {
+      defineReactive(value, key, value[key])
+    })
   }
 
   /**
