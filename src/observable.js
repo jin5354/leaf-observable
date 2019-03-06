@@ -21,13 +21,18 @@ export class Observable {
       configurable: true
     })
 
+    // 对于数组优化性能，不对索引进行 defineReactive
+    // 数组只对变异方法有响应
     if(Array.isArray(value)) {
       this.observifyArray(value)
+      for(let i = 0; i < value.length; i++) {
+        observify(value[i], false)
+      }
+    }else {
+      Object.keys(value).forEach((key) => {
+        defineReactive(value, key, value[key])
+      })
     }
-
-    Object.keys(value).forEach((key) => {
-      defineReactive(value, key, value[key])
-    })
   }
 
   /**
